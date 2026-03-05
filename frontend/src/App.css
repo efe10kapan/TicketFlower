@@ -1,0 +1,218 @@
+/* Genel Ayarlar */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #121212;
+  color: #fff;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5%;
+  background-color: #1a1a1a;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.logo span { color: #e50914; }
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #ccc;
+  transition: 0.3s;
+}
+.nav-links a:hover, .nav-links a.active { color: #e50914; }
+
+/* Tarih Scroll */
+.date-section {
+  padding: 20px 5%;
+  background-color: #181818;
+}
+
+.date-section h3 { margin-bottom: 15px; color: #888; }
+
+.date-scroll {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.date-card {
+  background: #2a2a2a;
+  min-width: 80px;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: 0.3s;
+}
+
+.date-card:hover { background: #333; }
+.date-card.active {
+  background: #e50914;
+  border-color: #ff3333;
+}
+
+.date-card .day-name { display: block; font-size: 0.9rem; margin-bottom: 5px; }
+.date-card .day-number { font-size: 1.4rem; font-weight: bold; }
+
+/* Filmler Alanı */
+.movies-section {
+  padding: 30px 5%;
+  flex: 1;
+}
+
+.container h2 { margin-bottom: 20px; border-left: 4px solid #e50914; padding-left: 10px; }
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive Grid */
+  gap: 25px;
+}
+
+/* Film Kartı */
+.movie-card {
+  background: #1e1e1e;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-card:hover { transform: translateY(-5px); }
+
+.image-container {
+  position: relative;
+  height: 400px;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rating-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.8);
+  color: #ffd700;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.movie-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.movie-title { font-size: 1.2rem; margin-bottom: 5px; }
+
+.movie-meta {
+  display: flex;
+  justify-content: space-between;
+  color: #aaa;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+/* KONUM ve YORUM STİLLERİ */
+.extra-info {
+  margin-bottom: 15px;
+  background: #252525;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.extra-info p {
+  font-size: 0.9rem;
+  color: #ddd;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.extra-info i { color: #e50914; width: 15px; }
+
+/* Buton */
+.buy-btn {
+  margin-top: auto;
+  width: 100%;
+  padding: 12px;
+  background-color: #e50914;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.buy-btn:hover { background-color: #c40812; }
+
+/* Footer */
+footer {
+  background-color: #0f0f0f;
+  padding: 50px 5% 20px;
+  margin-top: 50px;
+  border-top: 1px solid #333;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+  margin-bottom: 30px;
+}
+
+.footer-col h3 { color: #e50914; margin-bottom: 15px; }
+.footer-col p, .footer-col li { color: #bbb; line-height: 1.6; list-style: none; margin-bottom: 10px; }
+.footer-bottom { text-align: center; color: #555; padding-top: 20px; border-top: 1px solid #222; }
+/* App.css içine ekle */
+body {
+  background-color: #121212 !important; /* Arka planın koyu kalmasını sağlar */
+  color: white;
+}
+
+/* Scrollbar düzeltmesi */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-thumb {
+    background: #e50914;
+    border-radius: 4px;
+}
