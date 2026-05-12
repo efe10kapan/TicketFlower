@@ -1,0 +1,8 @@
+{
+  "name": "ticketflower",
+  "private": true,
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "dev": "echo \"Use frontend or backend separately\""
+  }
+}

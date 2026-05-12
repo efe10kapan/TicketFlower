@@ -235,8 +235,9 @@ const ContentListPage = () => {
                               {/* --- RESİM ALANI --- */}
                               <Box position="relative">
                                   <AspectRatio ratio={2 / 3} w="100%">
-                                          <Image loading="lazy" src={item.image} alt={item.title} objectFit="cover" />
-                                  
+                                    <Image loading="lazy" src={item.image} alt={item.title} objectFit="cover" />
+                                  </AspectRatio>
+
                                   {/* TÜKENDİ İŞARETİ */}
                                   {isSoldOut && (
                                     <Flex 

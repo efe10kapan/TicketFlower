@@ -216,7 +216,7 @@ const AdminDashboard = () => {
                     {/* SOL: CANLI AKIŞ (MATRIX) */}
                     <GridItem>
                         <Box bg="black" p={4} borderRadius="xl" border="1px solid #333" h="600px" overflow="hidden" position="relative">
-                            <Heading size="sm" mb={4} color="green.400" fontFamily="monospace">>> CANLI_AKIS.EXE</Heading>
+                            <Heading size="sm" mb={4} color="green.400" fontFamily="monospace">&gt;&gt; CANLI_AKIS.EXE</Heading>
                             <Box>
                                 {transactions.map(tx => (
                                     <Flex key={tx.id} justify="space-between" mb={2} color="green.500" fontFamily="monospace" fontSize="xs">
