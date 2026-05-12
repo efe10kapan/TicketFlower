@@ -242,7 +242,7 @@ const TheaterDetailPage = () => {
     <Box bg="#0a0a0a" minH="100vh" color="gray.200" fontFamily="'Georgia', serif" pb={20}>
       
       {/* HERO SECTION */}
-      <Box h="70vh" position="relative" bgImage={`url(${activePlay.img})`} bgSize="cover" bgPosition="top" bgAttachment="fixed">
+      <Box h="70vh" position="relative" bgImage={`url(${activePlay.img})`} bgSize="cover" bgPosition="top">
         <Box position="absolute" inset={0} bgGradient="linear(to-t, #0a0a0a, rgba(0,0,0,0.6))" />
         <Container maxW="1300px" h="100%" position="relative" zIndex={2} display="flex" flexDirection="column" justifyContent="flex-end" pb={16}>
             <Button position="absolute" top={10} left={0} leftIcon={<FaArrowLeft />} variant="ghost" color="white" onClick={() => navigate(-1)} _hover={{ bg: "whiteAlpha.200" }}>Geri Dön</Button>

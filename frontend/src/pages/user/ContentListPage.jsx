@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Box, Heading, Text, Button, Image, Flex, Grid, Badge, HStack, Icon, 
@@ -111,21 +111,21 @@ const ContentListPage = () => {
   }, [isTheater]);
 
   // --- 2. FİLTRELEME (TAB'A GÖRE) ---
-  const getContentByTab = (status) => {
-    if (isTheater) {
-      return [
-        { id: 101, type: 'theater', title: "Hamlet", genre: "Trajedi", rating: 9.5, duration: "150 dk", image: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Hamlet_poster.jpg", age: "13+", tags: ["Tek Perde"], comments: 340, trailerUrl: "https://www.youtube.com/embed/S70t22Z22hM" },
-        { id: 102, type: 'theater', title: "Amadeus", genre: "Dram", rating: 9.8, duration: "160 dk", image: "https://upload.wikimedia.org/wikipedia/en/2/23/Amadeus_film.jpg", age: "Genel", tags: ["Müzikal"], comments: 1200, trailerUrl: "https://www.youtube.com/embed/yI4Jt6yT3KQ" },
-        { id: 103, type: 'theater', title: "Cimri", genre: "Komedi", rating: 9.0, duration: "130 dk", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Moliere_-_L%27Avare_-_1669.jpg/300px-Moliere_-_L%27Avare_-_1669.jpg", age: "Genel", tags: ["Klasik"], comments: 800, trailerUrl: "" }
-      ].filter(item => selectedGenre === 'Hepsi' || item.genre === selectedGenre);
-    } 
-    
-    return MOVIE_DB.filter(item => {
-      const statusMatch = item.status === status; // active veya coming
-      const genreMatch = selectedGenre === 'Hepsi' || item.genre.includes(selectedGenre);
-      return statusMatch && genreMatch;
-    });
-  };
+  const theaterContent = useMemo(() => {
+    return [
+      { id: 101, type: 'theater', title: "Hamlet", genre: "Trajedi", rating: 9.5, duration: "150 dk", image: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Hamlet_poster.jpg", age: "13+", tags: ["Tek Perde"], comments: 340, trailerUrl: "https://www.youtube.com/embed/S70t22Z22hM" },
+      { id: 102, type: 'theater', title: "Amadeus", genre: "Dram", rating: 9.8, duration: "160 dk", image: "https://upload.wikimedia.org/wikipedia/en/2/23/Amadeus_film.jpg", age: "Genel", tags: ["Müzikal"], comments: 1200, trailerUrl: "https://www.youtube.com/embed/yI4Jt6yT3KQ" },
+      { id: 103, type: 'theater', title: "Cimri", genre: "Komedi", rating: 9.0, duration: "130 dk", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Moliere_-_L%27Avare_-_1669.jpg/300px-Moliere_-_L%27Avare_-_1669.jpg", age: "Genel", tags: ["Klasik"], comments: 800, trailerUrl: "" }
+    ].filter(item => selectedGenre === 'Hepsi' || item.genre === selectedGenre);
+  }, [selectedGenre]);
+
+  const activeContent = useMemo(() => {
+    return MOVIE_DB.filter(item => item.status === 'active' && (selectedGenre === 'Hepsi' || item.genre.includes(selectedGenre)));
+  }, [selectedGenre]);
+
+  const comingContent = useMemo(() => {
+    return MOVIE_DB.filter(item => item.status === 'coming' && (selectedGenre === 'Hepsi' || item.genre.includes(selectedGenre)));
+  }, [selectedGenre]);
 
   const handleOpenTrailer = (url) => {
     setSelectedTrailer(url);
@@ -217,7 +217,7 @@ const ContentListPage = () => {
                 {/* 1. SEKME: VİZYONDAKİLER (ACTIVE) */}
                 <TabPanel p={0}>
                     <Grid templateColumns="repeat(auto-fill, minmax(220px, 1fr))" gap={6}>
-                        {getContentByTab('active').map((item) => {
+                        {activeContent.map((item) => {
                           // BU FİLM O GÜN TÜKENDİ Mİ?
                           const isSoldOut = item.id === soldOutMovieId;
                           
@@ -235,8 +235,7 @@ const ContentListPage = () => {
                               {/* --- RESİM ALANI --- */}
                               <Box position="relative">
                                   <AspectRatio ratio={2 / 3} w="100%">
-                                    <Image src={item.image} alt={item.title} objectFit="cover" />
-                                  </AspectRatio>
+                                          <Image loading="lazy" src={item.image} alt={item.title} objectFit="cover" />
                                   
                                   {/* TÜKENDİ İŞARETİ */}
                                   {isSoldOut && (
@@ -326,7 +325,7 @@ const ContentListPage = () => {
                 {!isTheater && (
                     <TabPanel p={0}>
                         <Grid templateColumns="repeat(auto-fill, minmax(220px, 1fr))" gap={6}>
-                            {getContentByTab('coming').map((item) => (
+                            {comingContent.map((item) => (
                                 <Box 
                                   key={item.id} 
                                   bg="#1e1e1e" borderRadius="xl" overflow="hidden" 
@@ -337,7 +336,7 @@ const ContentListPage = () => {
                                 >
                                   <Box position="relative">
                                       <AspectRatio ratio={2 / 3} w="100%">
-                                        <Image src={item.image} alt={item.title} objectFit="cover" filter="grayscale(80%)" _groupHover={{ filter: "grayscale(0%)" }} transition="0.3s" />
+                                        <Image loading="lazy" src={item.image} alt={item.title} objectFit="cover" filter="grayscale(80%)" _groupHover={{ filter: "grayscale(0%)" }} transition="0.3s" />
                                       </AspectRatio>
                                       
                                       <Badge position="absolute" top={2} right={2} colorScheme="orange" fontSize="xs" px={2}>YAKINDA</Badge>

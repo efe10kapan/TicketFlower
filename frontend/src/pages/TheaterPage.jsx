@@ -318,7 +318,7 @@ const TheaterPage = () => {
                         <Box w={`${occupancy}%`} h="100%" bg={`${barColor}.500`} transition="width 1s"/>
                     </Box>
                   </Tooltip>
-                  <Image src={play.img} w="100%" h="350px" objectFit="cover" objectPosition="top" filter="brightness(0.9)" />
+                  <Image loading="lazy" src={play.img} w="100%" h="350px" objectFit="cover" objectPosition="top" filter="brightness(0.9)" />
                   <Badge position="absolute" top={4} right={4} bg="red.600" color="white" px={3} py={1} borderRadius="md">{play.g}</Badge>
                   <Box p={5}>
                     <Heading size="md" mb={2} color="white" noOfLines={1}>{play.t}</Heading>
@@ -363,7 +363,7 @@ const TheaterPage = () => {
               <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 4 }} spacing={6}>
                 {FULL_PLAY_LIST.map((play) => (
                   <Card key={play.id} bg="#222" borderRadius="xl" overflow="hidden" border="1px solid #333" _hover={{ borderColor: "red.600", transform: "translateY(-5px)" }} transition="all 0.2s">
-                    <Image src={play.img} w="100%" h="200px" objectFit="cover" />
+                    <Image loading="lazy" src={play.img} w="100%" h="200px" objectFit="cover" />
                     <CardBody p={4}>
                       <Badge colorScheme="red" mb={2}>{play.g}</Badge>
                       <Heading size="md" mb={2} color="white" noOfLines={1}>{play.t}</Heading>

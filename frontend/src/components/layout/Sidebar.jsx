@@ -48,8 +48,15 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       if (saved) setBalance(parseFloat(saved));
     };
     updateBalance();
-    const interval = setInterval(updateBalance, 2000); 
-    return () => clearInterval(interval);
+
+    const handleStorageChange = (event) => {
+      if (event.key === 'userBalance') {
+        updateBalance();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const handleLogoutConfirm = () => {
