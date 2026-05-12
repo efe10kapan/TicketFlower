@@ -6,7 +6,9 @@ import {
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-
+import authService from '../services/authService.js';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../store/slices/authSlice.js';
 const RegisterPage = () => {
   const [tabIndex, setTabIndex] = useState(0); // 0: User, 1: Admin
   const [isLoading, setIsLoading] = useState(false);
@@ -23,65 +25,66 @@ const RegisterPage = () => {
 
   const navigate = useNavigate();
   const toast = useToast();
+  const dispatch = useDispatch();
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     setIsLoading(true);
+
+    if (tabIndex === 0) {
+      if (!name || !email || !password) {
+        toast({ title: "Eksik Bilgi", description: "Lütfen tüm alanları doldurun.", status: "warning" });
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const userData = await authService.register({ name, email, password });
+        dispatch(setUser(userData));
+        toast({ title: "Kayıt Başarılı!", description: "Sisteme giriş yapıldı.", status: "success", duration: 2000 });
+        navigate('/app');
+      } catch (error) {
+        toast({ title: "Kayıt Başarısız", description: error.response?.data?.message || error.message || 'Bir şeyler yanlış gitti', status: "error" });
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
 
     setTimeout(() => {
       const users = JSON.parse(localStorage.getItem('users') || "[]");
       let newUser;
 
-      // 1. MÜŞTERİ KAYDI
-      if (tabIndex === 0) {
-        if (!name || !email || !password) {
-            toast({ title: "Eksik Bilgi", description: "Lütfen tüm alanları doldurun.", status: "warning" });
-            setIsLoading(false); return;
-        }
-        
-        if(users.find(u => u.email === email)) {
-            toast({ title: "Hata", description: "Bu e-posta zaten kayıtlı.", status: "error" });
-            setIsLoading(false); return;
-        }
-
-        newUser = {
-          id: Date.now(), name, email, password, role: "user", balance: 0 
-        };
-      } 
-      
-      // 2. YÖNETİCİ KAYDI
-      else {
-        if (!storeId || !identityName || !password) {
-            toast({ title: "Eksik Bilgi", description: "Lütfen mağaza bilgilerini doldurun.", status: "warning" });
-            setIsLoading(false); return;
-        }
-
-        if(users.find(u => u.storeId === storeId)) {
-            toast({ title: "Hata", description: "Bu Mağaza Kimliği zaten kayıtlı.", status: "error" });
-            setIsLoading(false); return;
-        }
-
-        newUser = {
-          id: Date.now(),
-          name: identityName, 
-          storeId: storeId,   
-          password: password,
-          role: "admin",
-          balance: 99999 
-        };
+      if (!storeId || !identityName || !password) {
+        toast({ title: "Eksik Bilgi", description: "Lütfen mağaza bilgilerini doldurun.", status: "warning" });
+        setIsLoading(false); return;
       }
+
+      if(users.find(u => u.storeId === storeId)) {
+        toast({ title: "Hata", description: "Bu Mağaza Kimliği zaten kayıtlı.", status: "error" });
+        setIsLoading(false); return;
+      }
+
+      newUser = {
+        id: Date.now(),
+        name: identityName,
+        storeId: storeId,
+        password: password,
+        role: "admin",
+        balance: 99999
+      };
 
       users.push(newUser);
       localStorage.setItem('users', JSON.stringify(users));
 
       toast({ 
         title: "Kayıt Başarılı!", 
-        description: "Giriş ekranına yönlendiriliyorsunuz.", 
+        description: "Yönetici hesabı oluşturuldu.", 
         status: "success", 
         duration: 2000 
       });
 
       setTimeout(() => navigate('/login'), 1500);
-      
+      setIsLoading(false);
     }, 1000);
   };
 

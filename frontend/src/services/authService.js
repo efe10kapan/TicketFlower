@@ -1,31 +1,34 @@
 import axios from 'axios';
 
-// 🔥 HATA BURADAYDI: api/content değil, api/users olmalı.
-// Çünkü Backend'de server.js içinde kullanıcıları /api/users rotasına bağladık.
-const API_URL = 'http://127.0.0.1:5001/api/users';
+const API_URL = '/api/users';
 
 const register = async (userData) => {
-  // Bu istek artık doğru yere gidecek: http://127.0.0.1:5001/api/users/register
   const response = await axios.post(`${API_URL}/register`, userData);
-  
   if (response.data) {
     localStorage.setItem('user', JSON.stringify(response.data));
+    localStorage.setItem('currentUser', JSON.stringify(response.data));
+    if (response.data.balance !== undefined) {
+      localStorage.setItem('userBalance', parseFloat(response.data.balance) || 0);
+    }
   }
   return response.data;
 };
 
 const login = async (userData) => {
-  // Bu istek artık doğru yere gidecek: http://127.0.0.1:5001/api/users/login
   const response = await axios.post(`${API_URL}/login`, userData);
-  
   if (response.data) {
     localStorage.setItem('user', JSON.stringify(response.data));
+    localStorage.setItem('currentUser', JSON.stringify(response.data));
+    if (response.data.balance !== undefined) {
+      localStorage.setItem('userBalance', parseFloat(response.data.balance) || 0);
+    }
   }
   return response.data;
 };
 
 const logout = () => {
   localStorage.removeItem('user');
+  localStorage.removeItem('currentUser');
 };
 
 const authService = { register, logout, login };

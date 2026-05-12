@@ -24,11 +24,13 @@ const Navbar = () => {
       left={{ base: 0, md: "240px" }}
       height="70px"
       zIndex="9999" // Her şeyin en üstünde olması için çok yüksek bir değer
-      bg="white"
-      borderBottom="2px solid red" // Görünürlüğü test etmek için kırmızı çerçeve
+      bg="rgba(15, 23, 42, 0.94)"
+      borderBottom="1px solid rgba(255, 255, 255, 0.08)"
+      boxShadow="0 16px 38px rgba(0, 0, 0, 0.22)"
+      backdropFilter="saturate(180%) blur(14px)"
       display="flex"
       alignItems="center"
-      px={10}
+      px={{ base: 4, md: 10 }}
     >
       <Flex w="full" justifyContent="space-between" alignItems="center">
         <Text fontWeight="bold">TicketFlower</Text>

@@ -6,6 +6,9 @@ import {
 } from '@chakra-ui/react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom'; 
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import authService from '../services/authService.js';
+import { setUser } from '../store/slices/authSlice.js';
 
 const LoginPage = () => {
   // State
@@ -20,64 +23,54 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
   const toast = useToast();
+  const dispatch = useDispatch();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setIsLoading(true);
 
-    setTimeout(() => {
+    if (tabIndex === 1) {
       const users = JSON.parse(localStorage.getItem('users') || "[]");
-      
-      // --- 1. ADMIN GİRİŞİ ---
-      if (tabIndex === 1) {
-        
-        // A) SÜPER PATRON (ARKA KAPI) - Bunu ekledim
-        if (storeId === "BOSS" && identityName === "Patron" && password === "123") {
-             const superAdmin = { name: "Süper Patron", role: "admin", type: "super" };
-             localStorage.setItem('currentUser', JSON.stringify(superAdmin));
-             toast({ title: "Hoş Geldiniz Patron!", status: "success", duration: 2000 });
-             navigate('/app/admin');
-             return; 
-        }
 
-        // B) Sabit Mağaza Admini
-        const isStaticAdmin = (storeId === "34-IST-001" && identityName === "Admin" && password === "admin123");
-        
-        // C) Kayıtlı Admin Kontrolü
-        const foundAdmin = users.find(u => 
-          u.role === 'admin' && u.storeId === storeId && u.name === identityName && u.password === password
-        );
+      if (storeId === "BOSS" && identityName === "Patron" && password === "123") {
+        const superAdmin = { name: "Süper Patron", role: "admin", type: "super" };
+        localStorage.setItem('currentUser', JSON.stringify(superAdmin));
+        localStorage.setItem('user', JSON.stringify(superAdmin));
+        dispatch(setUser(superAdmin));
+        toast({ title: "Hoş Geldiniz Patron!", status: "success", duration: 2000 });
+        navigate('/app/admin');
+        setIsLoading(false);
+        return;
+      }
 
-        if (isStaticAdmin || foundAdmin) {
-          const adminData = foundAdmin || { name: identityName || "Yönetici", role: "admin" };
-          localStorage.setItem('currentUser', JSON.stringify(adminData));
-          toast({ title: "Yönetici Girişi Başarılı", status: "success", duration: 2000 });
-          navigate('/app/admin');
-        } else {
-          toast({ title: "Giriş Başarısız", description: "Mağaza bilgileri hatalı.", status: "error" });
-        }
-      } 
-      
-      // --- 2. MÜŞTERİ GİRİŞİ ---
-      else {
-        // A) SENİN HESABIN (VIP)
-        const isEfe = (email === "efe10kapan@gmail.com" && password === "123456");
-        // B) DEMO HESAP
-        const isDemo = (email === "efe@ticketflower.com" && password === "123");
-        
-        // C) Kayıtlı Kullanıcı
-        const foundUser = users.find(u => u.role === 'user' && u.email === email && u.password === password);
+      const isStaticAdmin = (storeId === "34-IST-001" && identityName === "Admin" && password === "admin123");
+      const foundAdmin = users.find(u => 
+        u.role === 'admin' && u.storeId === storeId && u.name === identityName && u.password === password
+      );
 
-        if (isEfe || isDemo || foundUser) {
-          const userData = foundUser || { name: "Efe Kapan", email: email, role: "user", balance: 5000 };
-          localStorage.setItem('currentUser', JSON.stringify(userData));
-          toast({ title: "Hoş Geldiniz!", description: "Keyifli seyirler.", status: "success", duration: 2000 });
-          navigate('/app');
-        } else {
-          toast({ title: "Giriş Başarısız", description: "E-posta veya şifre hatalı.", status: "error" });
-        }
+      if (isStaticAdmin || foundAdmin) {
+        const adminData = foundAdmin || { name: identityName || "Yönetici", role: "admin" };
+        localStorage.setItem('currentUser', JSON.stringify(adminData));
+        localStorage.setItem('user', JSON.stringify(adminData));
+        dispatch(setUser(adminData));
+        toast({ title: "Yönetici Girişi Başarılı", status: "success", duration: 2000 });
+        navigate('/app/admin');
+      } else {
+        toast({ title: "Giriş Başarısız", description: "Mağaza bilgileri hatalı.", status: "error" });
       }
       setIsLoading(false);
-    }, 1000);
+      return;
+    }
+
+    try {
+      const userData = await authService.login({ email, password });
+      dispatch(setUser(userData));
+      toast({ title: "Hoş Geldiniz!", description: "Keyifli seyirler.", status: "success", duration: 2000 });
+      navigate('/app');
+    } catch (error) {
+      toast({ title: "Giriş Başarısız", description: error.response?.data?.message || error.message || 'Bir şeyler yanlış gitti', status: "error" });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

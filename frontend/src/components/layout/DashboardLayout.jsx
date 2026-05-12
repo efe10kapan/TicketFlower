@@ -13,7 +13,7 @@ const DashboardLayout = () => {
   };
 
   return (
-    <Flex h="100vh" w="100vw" overflow="hidden" bg="gray.100">
+    <Flex h="100vh" w="100vw" overflow="hidden" bg="#080b14">
       
       {/* SOL: Sidebar Kutusu */}
       {/* Genişliği state'e göre değişiyor (Yumuşak geçişli) */}
@@ -21,12 +21,14 @@ const DashboardLayout = () => {
         w={isSidebarOpen ? "250px" : "80px"} 
         transition="width 0.3s ease" // 🔥 Animasyon
         flexShrink={0}
+        bg="rgba(15, 23, 42, 0.98)"
+        borderRight="1px solid rgba(255,255,255,0.08)"
       >
         <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
       </Box>
 
       {/* SAĞ: İçerik */}
-      <Box flex="1" h="100%" overflowY="auto" position="relative">
+      <Box flex="1" h="100%" overflowY="auto" position="relative" bg="#090b12">
         <Outlet />
       </Box>
 

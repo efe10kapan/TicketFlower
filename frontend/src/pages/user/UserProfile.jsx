@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box, Container, Flex, Heading, Text, Button, Image, Icon, 
+  Box, Container, Flex, Heading, Text, Button, Image, Icon,
   SimpleGrid, Badge, VStack, HStack, Divider, Input,
   Tabs, TabList, Tab, TabPanels, TabPanel,
-  Card, CardHeader, CardBody, 
+  Card, CardHeader, CardBody,
   useToast, Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, ModalCloseButton, useDisclosure,
   Grid, GridItem, FormControl, FormLabel
 } from '@chakra-ui/react';
@@ -37,20 +37,20 @@ const UserProfile = () => {
 
   // --- VERİLERİ ÇEK ---
   useEffect(() => {
-    // Bakiyeyi Çek
     const savedBalance = localStorage.getItem('userBalance');
     if (savedBalance !== null) {
-        setBalance(parseFloat(savedBalance));
+      setBalance(parseFloat(savedBalance) || 0);
     } else {
-        // Eğer kayıtlı bakiye yoksa (ilk giriş), kullanıcının varsayılan bakiyesini al
-        setBalance(user.balance || 0);
+      const backendBalance = parseFloat(user.balance) || 0;
+      setBalance(backendBalance);
+      if (backendBalance > 0) {
+        localStorage.setItem('userBalance', backendBalance);
+      }
     }
 
-    // Biletleri Çek
     const savedTickets = JSON.parse(localStorage.getItem('myTickets') || "[]");
-    // Ters çevir ki en son alınan bilet en üstte görünsün
-    setTickets(savedTickets.reverse());
-  }, [user.balance]); // user.balance değişirse tetikle
+    setTickets([...savedTickets].reverse());
+  }, [user.balance]);
 
   // --- BAKİYE YÜKLEME SÜRECİ ---
 
@@ -181,22 +181,21 @@ const UserProfile = () => {
             {/* SAĞ: BİLETLERİM LİSTESİ */}
             <Box gridColumn={{ lg: "span 2" }}>
                 <Card borderRadius="2xl" boxShadow="xl" minH="600px" border="1px solid #eee">
-                    <CardHeader borderBottom="1px solid" borderColor="gray.100" bg="white" borderRadius="2xl 2xl 0 0" py={6}>
-                        <Flex justify="space-between" align="center">
-                            <Heading size="md" color="gray.700">
-                                <Icon as={FaTicketAlt} mr={3} color="purple.500"/>
-                                Biletlerim
-                            </Heading>
-                            <Tabs variant="soft-rounded" colorScheme="purple" size="sm">
-                                <TabList>
-                                    <Tab>Aktif Biletler</Tab>
-                                    <Tab><Icon as={FaHistory} mr={2}/>Geçmiş</Tab>
-                                </TabList>
-                            </Tabs>
-                        </Flex>
+                    <CardHeader borderBottom="1px solid" borderColor="gray.100" bg="white" borderRadius="2xl 2xl 0 0" py={4} px={6}>
+                        <Heading size="md" color="gray.700">
+                            <Icon as={FaTicketAlt} mr={3} color="purple.500"/>
+                            Biletlerim
+                        </Heading>
                     </CardHeader>
 
-                    <CardBody bg="#fbfbfb" p={6}>
+                    <CardBody bg="#fbfbfb" p={0}>
+                      <Tabs variant="soft-rounded" colorScheme="purple" size="sm">
+                        <TabList px={6} pt={4} pb={2}>
+                            <Tab>Aktif ({tickets.length})</Tab>
+                            <Tab><Icon as={FaHistory} mr={2}/>Tüm Geçmiş</Tab>
+                        </TabList>
+                        <TabPanels>
+                          <TabPanel p={6}>
                         {tickets.length === 0 ? (
                             <VStack py={20} spacing={6} opacity={0.6}>
                                 <Icon as={FaTicketAlt} boxSize={24} color="gray.300" />
@@ -205,9 +204,8 @@ const UserProfile = () => {
                             </VStack>
                         ) : (
                             <VStack spacing={6}>
-                                {tickets.map((ticket, index) => {
-                                    // Tiyatro mu Sinema mı kontrolü (Daha sağlam mantık)
-                                    const isTheater = ticket.type === 'theater' || ticket.salon?.includes("Sahne") || ticket.stage; 
+                                {tickets.slice(0, 5).map((ticket, index) => {
+                                    const isTheater = ticket.type === 'theater' || ticket.salon?.includes("Sahne") || ticket.stage;
                                     const themeColor = isTheater ? "red" : "blue";
                                     const categoryName = isTheater ? "TİYATRO" : "SİNEMA";
 
@@ -276,6 +274,37 @@ const UserProfile = () => {
                                 })}
                             </VStack>
                         )}
+                          </TabPanel>
+
+                          {/* SEKME 2: TÜM GEÇMİŞ */}
+                          <TabPanel p={6}>
+                            {tickets.length === 0 ? (
+                              <VStack py={20} spacing={6} opacity={0.6}>
+                                <Icon as={FaTicketAlt} boxSize={24} color="gray.300" />
+                                <Text fontSize="lg" color="gray.500">Henüz hiç bilet almadınız.</Text>
+                              </VStack>
+                            ) : (
+                              <VStack spacing={4}>
+                                {tickets.map((ticket, index) => {
+                                  const isTheater = ticket.type === 'theater' || ticket.salon?.includes("Sahne") || ticket.stage;
+                                  const themeColor = isTheater ? "red" : "blue";
+                                  return (
+                                    <Flex key={index} w="full" bg="white" borderRadius="lg" overflow="hidden" boxShadow="sm" border="1px solid" borderColor="gray.200" align="center" p={4} gap={4}>
+                                      <Box w="8px" h="40px" bg={`${themeColor}.500`} borderRadius="full" flexShrink={0}/>
+                                      <Box flex="1">
+                                        <Text fontWeight="bold" fontSize="sm" color="gray.800" noOfLines={1}>{ticket.movie || ticket.title || ticket.t || "Bilet"}</Text>
+                                        <Text fontSize="xs" color="gray.500">{ticket.date}</Text>
+                                      </Box>
+                                      <Badge colorScheme={themeColor} fontSize="xs">{isTheater ? "TİYATRO" : "SİNEMA"}</Badge>
+                                      <Text fontWeight="bold" fontSize="sm" color={`${themeColor}.600`}>{ticket.totalPrice || ticket.price} TL</Text>
+                                    </Flex>
+                                  );
+                                })}
+                              </VStack>
+                            )}
+                          </TabPanel>
+                        </TabPanels>
+                      </Tabs>
                     </CardBody>
                 </Card>
             </Box>

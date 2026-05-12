@@ -2,10 +2,11 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import authService from '../../services/authService';
 
 // LocalStorage'dan kullanıcıyı güvenli bir şekilde çekiyoruz
-const user = JSON.parse(localStorage.getItem('user'));
+const localUser = localStorage.getItem('user') || localStorage.getItem('currentUser');
+const user = localUser ? JSON.parse(localUser) : null;
 
 const initialState = {
-  user: user ? user : null,
+  user: user,
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -55,6 +56,11 @@ export const authSlice = createSlice({
       state.isError = false;
       state.message = '';
     },
+    setUser: (state, action) => {
+      state.user = action.payload;
+      state.isError = false;
+      state.isSuccess = true;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -103,5 +109,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { reset } = authSlice.actions;
+export const { reset, setUser } = authSlice.actions;
 export default authSlice.reducer;

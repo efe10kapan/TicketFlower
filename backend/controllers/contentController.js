@@ -57,7 +57,12 @@ const addContent = asyncHandler(async (req, res) => {
 
 const getContent = asyncHandler(async (req, res) => {
   const { type } = req.query;
-  const filter = type ? { type } : {};
+  const filter = {};
+
+  if (type) {
+    filter.type = type;
+  }
+
   const contents = await Content.getAll(filter);
   res.json(contents);
 });

@@ -1,12 +1,6 @@
-// frontend/src/store/store.js
-
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
-import contentReducer from './slices/contentSlice'; // <<< YENİ İMPORT
-
-// frontend/src/store/store.js
-
-// ... diğer kodlar (configureStore vs.)
+import contentReducer from './slices/contentSlice';
 
 export const store = configureStore({
   reducer: {
@@ -15,4 +9,4 @@ export const store = configureStore({
   },
 });
 
-export default store; // 🔥 BU SATIRI EKLE
+export default store;
