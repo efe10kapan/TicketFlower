@@ -1,16 +1,12 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const connectDB = require('./config/db.js');
+const { connectDB } = require('./config/db.js');
 
-// Ortam değişkenlerini yükle
 dotenv.config();
-
-// Veritabanına bağlan
 connectDB();
 
 const app = express();
-
 // Middleware'ler
 app.use(cors());
 app.use(express.json());
